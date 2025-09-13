@@ -1780,6 +1780,16 @@
                 
                 showSuccess(`成功导入 ${successCount} 个账户`);
                 
+                // 清空批量输入框
+                document.getElementById('batchAccounts').value = '';
+                
+                // 清空验证结果区域
+                document.getElementById('verificationResultList').innerHTML = '';
+                
+                // 恢复按钮状态
+                importBtn.innerHTML = originalText;
+                importBtn.disabled = false;
+                
                 // 切换到账户管理标签页并刷新列表
                 setTimeout(() => {
                     switchTab('manage');
@@ -1789,8 +1799,8 @@
             } catch (error) {
                 showError('导入账户失败: ' + error.message);
                 // 恢复按钮状态
-                document.querySelector('.verification-import-btn').innerHTML = originalText;
-                document.querySelector('.verification-import-btn').disabled = false;
+                importBtn.innerHTML = originalText;
+                importBtn.disabled = false;
             }
         }
 
