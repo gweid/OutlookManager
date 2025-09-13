@@ -84,7 +84,7 @@ git clone https://github.com/oDaiSuno/OutlookManager.git && cd OutlookManager
 docker compose up -d
 
 # 🌐 访问服务
-open http://localhost:8000
+open http://localhost:8005
 ```
 
 ### 方式二：自动化脚本
@@ -156,7 +156,7 @@ python main.py
 
 ### 🚀 首次访问流程
 
-1. **访问系统** 👉 `http://localhost:8000`
+1. **访问系统** 👉 `http://localhost:8005`
 2. **管理员登录** 👉 输入管理密码（默认：`admin123`）
 3. **邮箱账户配置** 👉 添加Outlook账户凭证
 4. **开始使用** 👉 查看和管理邮件
@@ -194,7 +194,7 @@ graph LR
 
 **验证认证配置**:
 ```bash
-curl "http://localhost:8000/auth/config" \
+curl "http://localhost:8005/auth/config" \
   -H "Authorization: Bearer admin123"
 ```
 
@@ -213,7 +213,7 @@ curl "http://localhost:8000/auth/config" \
 
 **单个账户注册**:
 ```bash
-curl -X POST "http://localhost:8000/accounts" \
+curl -X POST "http://localhost:8005/accounts" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer admin123" \
   -d '{
@@ -225,7 +225,7 @@ curl -X POST "http://localhost:8000/accounts" \
 
 **批量账户注册**:
 ```bash
-curl -X POST "http://localhost:8000/accounts" \
+curl -X POST "http://localhost:8005/accounts" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer admin123" \
   -d '[
@@ -258,17 +258,17 @@ curl -X POST "http://localhost:8000/accounts" \
 **获取账户列表**:
 ```bash
 # 基础列表
-curl "http://localhost:8000/accounts" \
+curl "http://localhost:8005/accounts" \
   -H "Authorization: Bearer admin123"
 
 # 检查活性状态
-curl "http://localhost:8000/accounts?check_status=true" \
+curl "http://localhost:8005/accounts?check_status=true" \
   -H "Authorization: Bearer admin123"
 ```
 
 **批量验证账户**:
 ```bash
-curl -X POST "http://localhost:8000/accounts/verify" \
+curl -X POST "http://localhost:8005/accounts/verify" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer admin123" \
   -d '{
@@ -284,7 +284,7 @@ curl -X POST "http://localhost:8000/accounts/verify" \
 
 **批量删除账户**:
 ```bash
-curl -X DELETE "http://localhost:8000/accounts" \
+curl -X DELETE "http://localhost:8005/accounts" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer admin123" \
   -d '{
@@ -299,19 +299,19 @@ curl -X DELETE "http://localhost:8000/accounts" \
 
 ```bash
 # 获取所有邮件（智能聚合）
-curl "http://localhost:8000/emails/your_email@outlook.com?folder=all&page=1&page_size=100" \
+curl "http://localhost:8005/emails/your_email@outlook.com?folder=all&page=1&page_size=100" \
   -H "Authorization: Bearer admin123"
 
 # 仅收件箱
-curl "http://localhost:8000/emails/your_email@outlook.com?folder=inbox" \
+curl "http://localhost:8005/emails/your_email@outlook.com?folder=inbox" \
   -H "Authorization: Bearer admin123"
 
 # 仅垃圾箱
-curl "http://localhost:8000/emails/your_email@outlook.com?folder=junk" \
+curl "http://localhost:8005/emails/your_email@outlook.com?folder=junk" \
   -H "Authorization: Bearer admin123"
 
 # 双栏视图（推荐）
-curl "http://localhost:8000/emails/your_email@outlook.com/dual-view?inbox_page=1&junk_page=1&page_size=20" \
+curl "http://localhost:8005/emails/your_email@outlook.com/dual-view?inbox_page=1&junk_page=1&page_size=20" \
   -H "Authorization: Bearer admin123"
 ```
 
@@ -333,7 +333,7 @@ curl "http://localhost:8000/emails/your_email@outlook.com/dual-view?inbox_page=1
 <summary><strong>📖 4. 获取邮件详情</strong></summary>
 
 ```bash
-curl "http://localhost:8000/emails/your_email@outlook.com/INBOX-12345" \
+curl "http://localhost:8005/emails/your_email@outlook.com/INBOX-12345" \
   -H "Authorization: Bearer admin123"
 ```
 
@@ -354,7 +354,7 @@ curl "http://localhost:8000/emails/your_email@outlook.com/INBOX-12345" \
 
 ### 🔍 交互式API文档
 
-访问 `http://localhost:8000/docs` 体验完整的交互式API文档
+访问 `http://localhost:8005/docs` 体验完整的交互式API文档
 
 ---
 
@@ -410,7 +410,7 @@ curl "http://localhost:8000/emails/your_email@outlook.com/INBOX-12345" \
 ```bash
 # 基础服务配置
 HOST=0.0.0.0          # 监听地址
-PORT=8000             # 监听端口
+PORT=8005             # 监听端口
 WORKERS=1             # 工作进程数
 LOG_LEVEL=info        # 日志级别
 

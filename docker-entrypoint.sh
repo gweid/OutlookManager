@@ -2,7 +2,7 @@
 
 # 设置默认值
 HOST=${HOST:-"0.0.0.0"}
-PORT=${PORT:-8000}
+PORT=${PORT:-8005}
 WORKERS=${WORKERS:-1}
 
 # 创建必要的目录
