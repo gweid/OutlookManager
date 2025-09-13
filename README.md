@@ -81,6 +81,9 @@
 ```bash
 # 🎯 最快启动
 git clone https://github.com/oDaiSuno/OutlookManager.git && cd OutlookManager
+
+vim accounts.json # 添加为 {}
+
 docker compose up -d
 
 # 🌐 访问服务
@@ -449,5 +452,4 @@ docker compose down -v && docker compose up -d
 **⭐ 如果这个项目对你有帮助，请给我们一个星标！**
 
 [![Star History Chart](https://api.star-history.com/svg?repos=oDaiSuno/OutlookManager&type=Date)](https://www.star-history.com/#oDaiSuno/OutlookManager&Date)
-
 
