@@ -1469,7 +1469,7 @@
         let currentUser = null;
         let currentPage = 1;
         let totalEmails = 0;
-        let savedAccounts = JSON.parse(localStorage.getItem('savedAccounts') || '{}');
+        let savedAccounts = {}; // 不再从 localStorage 初始化，改为从后端获取
         let adminPassword = localStorage.getItem('adminPassword');
 
         function formatEmailDate(dateString) {
@@ -1680,8 +1680,8 @@
 
                 if (!response.ok) throw new Error('验证失败');
                 
-                savedAccounts[email] = { refresh_token: refreshToken, client_id: clientId };
-                localStorage.setItem('savedAccounts', JSON.stringify(savedAccounts));
+                // 登录成功后，重新从后端获取账户列表以更新 savedAccounts
+                await loadSavedAccountsFromBackend();
                 
                 currentUser = email;
                 showLoginSuccess();
@@ -1769,14 +1769,8 @@
                     results.filter(r => !r.message.startsWith('Error')).length : 
                     (results.message.includes('success') ? 1 : 0);
                 
-                // 更新本地存储
-                for (const account of accounts) {
-                    savedAccounts[account.email] = {
-                        refresh_token: account.refresh_token,
-                        client_id: account.client_id
-                    };
-                }
-                localStorage.setItem('savedAccounts', JSON.stringify(savedAccounts));
+                // 更新本地缓存（但不依赖 localStorage）
+                await loadSavedAccountsFromBackend();
                 
                 showSuccess(`成功导入 ${successCount} 个账户`);
                 
@@ -1988,9 +1982,14 @@
             });
         }
         
-        function loginWithAccount(email) {
+        async function loginWithAccount(email) {
+            // 先确保 savedAccounts 是最新的
+            if (Object.keys(savedAccounts).length === 0) {
+                await loadSavedAccountsFromBackend();
+            }
+            
             if (!savedAccounts[email]) {
-                showError('账户信息不存在');
+                showError('账户信息不存在，请确认账户已在系统中注册');
                 return;
             }
             
@@ -2039,11 +2038,8 @@
                 
                 const result = await response.json();
                 
-                // 更新本地存储
-                emails.forEach(email => {
-                    delete savedAccounts[email];
-                });
-                localStorage.setItem('savedAccounts', JSON.stringify(savedAccounts));
+                // 重新从后端获取账户列表以更新 savedAccounts
+                await loadSavedAccountsFromBackend();
                 
                 showSuccess(result.message || `成功删除 ${result.deleted} 个账户`);
                 
@@ -2424,6 +2420,11 @@
                 return;
             }
             
+            // 确保 savedAccounts 是最新的
+            if (Object.keys(savedAccounts).length === 0) {
+                await loadSavedAccountsFromBackend();
+            }
+            
             if (!savedAccounts[selectedEmail]) {
                 showError('账户信息不存在，请返回账户管理重新添加');
                 switcher.value = currentUser; // 恢复原选择
@@ -2493,9 +2494,39 @@
             }
         }
 
-        window.onload = function() {
+        // 添加从后端加载账户信息的函数
+        async function loadSavedAccountsFromBackend() {
+            try {
+                const response = await makeRequest(`${API_BASE}/accounts`);
+                if (!response.ok) throw new Error('获取账户列表失败');
+                
+                const accounts = await response.json();
+                savedAccounts = {};
+                
+                // 将账户列表转换为 savedAccounts 格式
+                for (const account of accounts) {
+                    // 需要从后端获取完整的账户信息
+                    // 由于 /accounts API 只返回邮箱列表，我们需要存储一个标记
+                    // 实际使用时会从 accounts.json 读取
+                    savedAccounts[account.email] = {
+                        // 这里只是标记账户存在，实际的 token 信息在后端
+                        exists: true
+                    };
+                }
+                
+                console.log(`从后端加载了 ${Object.keys(savedAccounts).length} 个账户`);
+                return savedAccounts;
+            } catch (error) {
+                console.error('加载账户信息失败:', error);
+                return {};
+            }
+        }
+
+        window.onload = async function() {
             // 检查管理员认证状态
             if (isPasswordSet()) {
+                // 登录成功后，先从后端加载账户信息
+                await loadSavedAccountsFromBackend();
                 showEmailManagement();
             } else {
                 showAdminLogin();
